@@ -1,4 +1,4 @@
-# Worker Cloudflare Telegram MongoDB
+# Worker Cloudflare Server
 
 ## Project Initialization Guide
 
