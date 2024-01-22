@@ -1,5 +1,5 @@
-import * as utils from "./utils";
 import mongodb from "./mongodb/init";
+import RequestHandler from "./RequestHandler/init";
 // // The Worker's environment bindings. See `wrangler.toml` file.
 interface Bindings {
 	// MongoDB Realm Application ID
@@ -14,15 +14,48 @@ const worker: ExportedHandler<Bindings> = {
 		const database = new mongodb({
 			apiKey: env.API_MONGO_TOKEN,
 			apiUrl: env.URL_API_MONGO,
-			dataSource: "AtlasCluster",
+			dataSource: "YourdatabaseSource",
 		});
-		const url = new URL(req.url);
-		const path = url.pathname.replace(/[/]$/, "");
-		if (path !== "/your_api") {
-			return utils.toError(`Unknown "${path}" URL; try "/your_api" instead.`, 404);
+
+		// Sử dụng class RequestHandler
+		const router = new RequestHandler(req);
+
+		async function test(request: any, next: () => void) {
+			console.log("Executing middleware");
+			next();
 		}
-		
-		return utils.toJSON("ok", 200);
+
+		router.use(test);
+
+		router.get("/ok", async (request, res) => {
+			return res.status(200).text("GET OK").send();
+		});
+
+		router.post("/ok", async (request, res) => {
+			return res.status(200).text("POST OK").send();
+		});
+
+		router.delete("/ok", async (request, res) => {
+			return res.status(200).text("DELETE OK").send();
+		});
+
+		router.put("/ok", async (request, res) => {
+			return res.status(200).text("PUT OK").send();
+		});
+
+		router.patch("/ok", async (request, res) => {
+			return res.status(200).text("PATCH OK").send();
+		});
+
+		router.head("/ok", async (request, res) => {
+			return res.status(200).send();
+		});
+
+		router.options("/ok", async (request, res) => {
+			return res.status(200).text("OPTIONS OK").send();
+		});
+
+		return await router.server();
 	},
 	async scheduled(event, env, ctx) {
 		console.log("cron processed");
