@@ -65,7 +65,7 @@ export default class RequestHandler {
 				handler(this.request, this.response)
 			);
 		} else {
-			return this.response.status(404).json({ status: "Not Found" }).send();
+			return this.response.status(404).text("Not Found").send();
 		}
 	}
 
