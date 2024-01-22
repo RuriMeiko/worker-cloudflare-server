@@ -82,44 +82,44 @@ const text = await this.database.db("").collection("").find();
 Here is a demo of how to use Router functions:
 
 ```typescript
-      const router = new RequestHandler(req);
+const router = new RequestHandler(req);
 
-		async function test(request: any, next: () => void) {
-			console.log("Executing middleware");
-			next();
-		}
+async function test(request: any, next: () => void) {
+	console.log("Executing middleware");
+	next();
+}
 
-		router.use(test);
+router.use(test);
 
-		router.get("/ok", async (request, res) => {
-			return res.status(200).text("GET OK").send();
-		});
+router.get("/ok", async (request, res) => {
+	return res.status(200).text("GET OK").send();
+});
 
-		router.post("/ok", async (request, res) => {
-			return res.status(200).text("POST OK").send();
-		});
+router.post("/ok", async (request, res) => {
+	return res.status(200).text("POST OK").send();
+});
 
-		router.delete("/ok", async (request, res) => {
-			return res.status(200).text("DELETE OK").send();
-		});
+router.delete("/ok", async (request, res) => {
+	return res.status(200).text("DELETE OK").send();
+});
 
-		router.put("/ok", async (request, res) => {
-			return res.status(200).text("PUT OK").send();
-		});
+router.put("/ok", async (request, res) => {
+	return res.status(200).text("PUT OK").send();
+});
 
-		router.patch("/ok", async (request, res) => {
-			return res.status(200).text("PATCH OK").send();
-		});
+router.patch("/ok", async (request, res) => {
+	return res.status(200).text("PATCH OK").send();
+});
 
-		router.head("/ok", async (request, res) => {
-			return res.status(200).send();
-		});
+router.head("/ok", async (request, res) => {
+	return res.status(200).send();
+});
 
-		router.options("/ok", async (request, res) => {
-			return res.status(200).text("OPTIONS OK").send();
-		});
+router.options("/ok", async (request, res) => {
+	return res.status(200).text("OPTIONS OK").send();
+});
 
-		return await router.server();
+return await router.server();
 ```
 
 ## CPU Performance
