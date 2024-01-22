@@ -4,7 +4,6 @@ import RequestHandler from "./RequestHandler/init";
 interface Bindings {
 	// MongoDB Realm Application ID
 	API_MONGO_TOKEN: string;
-	API_TELEGRAM: string;
 	URL_API_MONGO: string;
 }
 
