@@ -1,6 +1,8 @@
 import CustomResponse from "./response";
-
-type HandlerFunction = (request: Request, response: CustomResponse) => Promise<Response>;
+type RequestCustom = Request & {
+	query: object;
+};
+type HandlerFunction = (request: RequestCustom, response: CustomResponse) => Promise<Response>;
 type MiddlewareFunction = (request: Request, next: () => void) => void;
 
 export default class RequestHandler {
@@ -57,27 +59,24 @@ export default class RequestHandler {
 	async server(): Promise<Response> {
 		const method = this.request.method;
 		const url = new URL(this.request.url);
+		//@ts-ignore
+		this.request.query = Object.fromEntries(url.searchParams);
 		const routeKey = `${method} ${url.pathname}`;
 		const handler = this.routes[routeKey];
 
 		if (handler) {
-			return await this.runMiddleware(this.request, () =>
-				handler(this.request, this.response)
-			);
+			await this.runMiddleware(this.request);
+			//@ts-ignore
+			return handler(this.request, this.response);
 		} else {
 			return this.response.status(404).text("Not Found").send();
 		}
 	}
 
-	private async runMiddleware(
-		request: Request,
-		callback: () => Promise<Response>,
-		index: number = 0
-	): Promise<Response> {
+	private async runMiddleware(request: Request, index: number = 0): Promise<void> {
 		if (index < this.middlewareStack.length) {
 			const currentMiddleware = this.middlewareStack[index];
-			currentMiddleware(request, () => this.runMiddleware(request, callback, index + 1));
+			return currentMiddleware(request, () => this.runMiddleware(request, index + 1));
 		}
-		return callback();
 	}
 }
