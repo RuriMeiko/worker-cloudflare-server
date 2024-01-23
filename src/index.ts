@@ -29,33 +29,34 @@ const worker: ExportedHandler<Bindings> = {
 		router.get("/ok", async (req, res) => {
 			//demo how to get query
 			console.log(req.query);
-			return res.status(200).text("GET OK").send();
+			// default status code is 200
+			return res.status().text("GET OK").send();
 		});
 
 		router.post("/ok", async (req, res) => {
 			//demo how to read body
 			console.log(await req.json());
-			return res.status(200).text("POST OK").send();
+			return res.status(203).text("POST OK").send();
 		});
 
 		router.delete("/ok", async (req, res) => {
-			return res.status(200).text("DELETE OK").send();
+			return res.status().text("DELETE OK").send();
 		});
 
 		router.put("/ok", async (req, res) => {
-			return res.status(200).text("PUT OK").send();
+			return res.status().text("PUT OK").send();
 		});
 
 		router.patch("/ok", async (req, res) => {
-			return res.status(200).text("PATCH OK").send();
+			return res.status().text("PATCH OK").send();
 		});
 
 		router.head("/ok", async (req, res) => {
-			return res.status(200).send();
+			return res.status().send();
 		});
 
 		router.options("/ok", async (req, res) => {
-			return res.status(200).text("OPTIONS OK").send();
+			return res.status().text("OPTIONS OK").send();
 		});
 
 		return await router.server();

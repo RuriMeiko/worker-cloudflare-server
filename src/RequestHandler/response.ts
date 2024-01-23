@@ -5,8 +5,8 @@ export default class CustomResponseBuilder {
 		this.customResponse = new CustomResponse();
 	}
 
-	status(code: number): CustomResponseTextandJsonBuilder {
-		return new CustomResponseTextandJsonBuilder(this.customResponse.status(code));
+	status(code?: number): CustomResponseTextandJsonBuilder {
+		return new CustomResponseTextandJsonBuilder(this.customResponse.status(code ? code : 200));
 	}
 }
 
