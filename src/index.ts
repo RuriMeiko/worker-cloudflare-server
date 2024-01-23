@@ -13,7 +13,7 @@ const worker: ExportedHandler<Bindings> = {
 		const database = new mongodb({
 			apiKey: env.API_MONGO_TOKEN,
 			apiUrl: env.URL_API_MONGO,
-			dataSource: "YourDatabaseName",
+			dataSource: "YourDataSource",
 		});
 
 		// Use class RequestHandler
