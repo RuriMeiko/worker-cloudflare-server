@@ -82,40 +82,45 @@ const text = await this.database.db("").collection("").find();
 Here is a demo of how to use Router functions:
 
 ```typescript
+// Use class RequestHandler
 const router = new RequestHandler(req);
 
-async function test(request: any, next: () => void) {
+// Demo how to use middleware
+async function test(req: any, next: () => void) {
 	console.log("Executing middleware");
 	next();
 }
-
 router.use(test);
-
-router.get("/ok", async (request, res) => {
+// Router for each method
+router.get("/ok", async (req, res) => {
+	//demo how to get query
+	console.log(req.query);
 	return res.status(200).text("GET OK").send();
 });
 
-router.post("/ok", async (request, res) => {
+router.post("/ok", async (req, res) => {
+	//demo how to read body
+	console.log(await req.json());
 	return res.status(200).text("POST OK").send();
 });
 
-router.delete("/ok", async (request, res) => {
+router.delete("/ok", async (req, res) => {
 	return res.status(200).text("DELETE OK").send();
 });
 
-router.put("/ok", async (request, res) => {
+router.put("/ok", async (req, res) => {
 	return res.status(200).text("PUT OK").send();
 });
 
-router.patch("/ok", async (request, res) => {
+router.patch("/ok", async (req, res) => {
 	return res.status(200).text("PATCH OK").send();
 });
 
-router.head("/ok", async (request, res) => {
+router.head("/ok", async (req, res) => {
 	return res.status(200).send();
 });
 
-router.options("/ok", async (request, res) => {
+router.options("/ok", async (req, res) => {
 	return res.status(200).text("OPTIONS OK").send();
 });
 
