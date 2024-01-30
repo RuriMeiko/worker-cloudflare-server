@@ -10,16 +10,20 @@ interface Bindings {
 // Define the Worker logic
 const worker: ExportedHandler<Bindings> = {
 	async fetch(req, env) {
-		const database = new mongodb({
-			apiKey: env.API_MONGO_TOKEN,
-			apiUrl: env.URL_API_MONGO,
-			dataSource: "YourDataSource",
-		});
+		// const database = new mongodb({
+		// 	apiKey: env.API_MONGO_TOKEN,
+		// 	apiUrl: env.URL_API_MONGO,
+		// 	dataSource: "YourDataSource",
+		// });
 		// Use class RequestHandler
 		const router = new RequestHandler(req);
 
 		// Demo how to use middleware
 		async function test(req: any, next: () => void) {
+			router.header("Access-Control-Allow-Headers", "*");
+			router.header("Access-Control-Allow-Methods", "*");
+			router.header("Access-Control-Allow-Origin", "*");
+			router.header("Access-Control-Allow-Credentials", "*");
 			console.log("Executing middleware");
 			next();
 		}
@@ -29,33 +33,33 @@ const worker: ExportedHandler<Bindings> = {
 			//demo how to get query
 			console.log(req.query);
 			// default status code is 200
-			return res.status().text("GET OK").send();
+			return res.status().text("GET OK");
 		});
 
 		router.post("/ok", async (req, res) => {
 			//demo how to read body
 			console.log(await req.json());
-			return res.status(203).text("POST OK").send();
+			return res.status(203).text("POST OK");
 		});
 
 		router.delete("/ok", async (req, res) => {
-			return res.status().text("DELETE OK").send();
+			return res.status().text("DELETE OK");
 		});
 
 		router.put("/ok", async (req, res) => {
-			return res.status().text("PUT OK").send();
+			return res.status().text("PUT OK");
 		});
 
 		router.patch("/ok", async (req, res) => {
-			return res.status().text("PATCH OK").send();
+			return res.status().text("PATCH OK");
 		});
 
 		router.head("/ok", async (req, res) => {
-			return res.status().send();
+			return res.sendStatus();
 		});
 
 		router.options("/ok", async (req, res) => {
-			return res.status().text("OPTIONS OK").send();
+			return res.status().text("OPTIONS OK");
 		});
 
 		return await router.server();

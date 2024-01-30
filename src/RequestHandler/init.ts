@@ -10,6 +10,15 @@ export default class RequestHandler {
 	private middlewareStack: MiddlewareFunction[];
 	private readonly request: Request;
 	private response: CustomResponse;
+	private methodStatus: any = {
+		GET: false,
+		POST: false,
+		PUT: false,
+		DELETE: false,
+		PATCH: false,
+		HEAD: false,
+		OPTIONS: false,
+	};
 
 	constructor(req: Request) {
 		const res = new CustomResponse();
@@ -29,39 +38,71 @@ export default class RequestHandler {
 	}
 
 	get(url: string, handler: HandlerFunction) {
-		this.addRoute("GET", url, handler);
+		if (this.methodStatus.GET) this.addRoute("GET", "*", handler);
+		else {
+			if (url === "*") this.methodStatus.GET = true;
+			this.addRoute("GET", url, handler);
+		}
 	}
 
 	post(url: string, handler: HandlerFunction) {
-		this.addRoute("POST", url, handler);
+		if (this.methodStatus.POST) this.addRoute("POST", "*", handler);
+		else {
+			if (url === "*") this.methodStatus.POST = true;
+			this.addRoute("POST", url, handler);
+		}
 	}
 
 	put(url: string, handler: HandlerFunction) {
-		this.addRoute("PUT", url, handler);
+		if (this.methodStatus.PUT) this.addRoute("PUT", "*", handler);
+		else {
+			if (url === "*") this.methodStatus.PUT = true;
+			this.addRoute("PUT", url, handler);
+		}
 	}
 
 	delete(url: string, handler: HandlerFunction) {
-		this.addRoute("DELETE", url, handler);
+		if (this.methodStatus.DELETE) this.addRoute("DELETE", "*", handler);
+		else {
+			if (url === "*") this.methodStatus.DELETE = true;
+			this.addRoute("DELETE", url, handler);
+		}
 	}
 
 	patch(url: string, handler: HandlerFunction) {
-		this.addRoute("PATCH", url, handler);
+		if (this.methodStatus.PATCH) this.addRoute("PATCH", "*", handler);
+		else {
+			if (url === "*") this.methodStatus.PATCH = true;
+			this.addRoute("PATCH", url, handler);
+		}
 	}
 
 	head(url: string, handler: HandlerFunction) {
-		this.addRoute("HEAD", url, handler);
+		if (this.methodStatus.HEAD) this.addRoute("HEAD", "*", handler);
+		else {
+			if (url === "*") this.methodStatus.HEAD = true;
+			this.addRoute("HEAD", url, handler);
+		}
 	}
 
 	options(url: string, handler: HandlerFunction) {
-		this.addRoute("OPTIONS", url, handler);
+		if (this.methodStatus.OPTIONS) this.addRoute("OPTIONS", "*", handler);
+		else {
+			if (url === "*") this.methodStatus.OPTIONS = true;
+			this.addRoute("OPTIONS", url, handler);
+		}
 	}
-
+	header(key: string, value: string): void {
+		this.response.headers[key] = value;
+	}
 	async server(): Promise<Response> {
 		const method = this.request.method;
 		const url = new URL(this.request.url);
+		let routeKey: string;
 		//@ts-ignore
 		this.request.query = Object.fromEntries(url.searchParams);
-		const routeKey = `${method} ${url.pathname}`;
+		if (this.methodStatus[method]) routeKey = `${method} *`;
+		else routeKey = `${method} ${url.pathname}`;
 		const handler = this.routes[routeKey];
 
 		if (handler) {
@@ -69,7 +110,7 @@ export default class RequestHandler {
 			//@ts-ignore
 			return handler(this.request, this.response);
 		} else {
-			return this.response.status(404).text("Not Found").send();
+			return this.response.status(404).text("Not Found");
 		}
 	}
 

@@ -1,50 +1,9 @@
-export default class CustomResponseBuilder {
-	private customResponse: CustomResponse;
+import { statusCodeinfo } from "./data";
 
-	constructor() {
-		this.customResponse = new CustomResponse();
-	}
-
-	status(code?: number): CustomResponseTextandJsonBuilder {
-		return new CustomResponseTextandJsonBuilder(this.customResponse.status(code ? code : 200));
-	}
-}
-
-class CustomResponseTextandJsonBuilder {
-	private customResponse: CustomResponse;
-
-	constructor(customResponse: CustomResponse) {
-		this.customResponse = customResponse;
-	}
-
-	text(data: string): CustomResponseSender {
-		return new CustomResponseSender(this.customResponse.text(data));
-	}
-	json(data: object): CustomResponseSender {
-		return new CustomResponseSender(this.customResponse.json(data));
-	}
-
-	send(): Response {
-		return this.customResponse.send();
-	}
-}
-
-class CustomResponseSender {
-	private customResponse: CustomResponse;
-
-	constructor(customResponse: CustomResponse) {
-		this.customResponse = customResponse;
-	}
-
-	send(): Response {
-		return this.customResponse.send();
-	}
-}
-
-class CustomResponse {
+export default class CustomResponse {
 	private statuscode: number;
 	private body: any;
-
+	headers: { [key: string]: string } = {};
 	constructor() {
 		this.statuscode = 200;
 		this.body = null;
@@ -59,21 +18,37 @@ class CustomResponse {
 		return this;
 	}
 
-	text(data: string): CustomResponse {
-		return this.setBody(data);
+	text(data: string): Response {
+		this.header("Content-type", "text/plain");
+		this.setBody(data);
+		return this.send();
 	}
 
-	json(data: object): CustomResponse {
-		return this.setBody(JSON.stringify(data, null, 2));
+	json(data: object): Response {
+		this.header("Content-type", "application/json");
+		this.setBody(JSON.stringify(data, null, 2));
+		return this.send();
 	}
 
-	status(code: number): CustomResponse {
-		this.statuscode = code;
+	status(code?: number): CustomResponse {
+		this.statuscode = code ? code : 200;
+		if (statusCodeinfo[this.statuscode]) {
+			this.header("Content-type", "text/plain");
+			this.setBody(statusCodeinfo[this.statuscode].status);
+		}
 		return this;
 	}
 
-	send(): Response {
-		const headers = { "Content-Type": "application/json" };
+	sendStatus(code?: number): Response {
+		this.status(code);
+		return this.send();
+	}
+	header(key: string, value: string): void {
+		this.headers[key] = value;
+	}
+
+	private send(): Response {
+		const headers = this.headers;
 		const body = this.body;
 		return new Response(body, { status: this.statuscode, headers });
 	}
