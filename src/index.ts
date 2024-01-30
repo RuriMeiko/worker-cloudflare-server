@@ -15,7 +15,6 @@ const worker: ExportedHandler<Bindings> = {
 			apiUrl: env.URL_API_MONGO,
 			dataSource: "YourDataSource",
 		});
-
 		// Use class RequestHandler
 		const router = new RequestHandler(req);
 
